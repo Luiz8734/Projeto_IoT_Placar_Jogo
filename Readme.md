@@ -1,6 +1,12 @@
-# Projeto IoT: Placar de Jogo - Canal Passa a Bola ⚽
+# 🏆 Placar de Jogo Conectado — ESP32 + MQTT + LCD I2C
 
-## Integrantes
+> Projeto desenvolvido como parte das atividades da disciplina de **IoT & Sistemas Embarcados**, com foco em **integração de hardware e nuvem via protocolo MQTT**.  
+> A solução apresenta um **placar digital inteligente**, conectado a um **broker MQTT**, capaz de atualizar os resultados de forma remota e em tempo real.
+
+---
+
+## 👨‍💻 Integrantes
+
 | RM      | Nome Completo          |
 |---------|----------------------|
 | 562142  | Luiz Antonio Morais   |
@@ -10,148 +16,240 @@
 
 ---
 
-## Descrição do Projeto
-O **Placar de Jogo IoT** é um sistema eletrônico desenvolvido para monitorar e exibir gols de partidas de futebol em tempo real. O projeto foi idealizado para o canal **"Passa a Bola"** com o objetivo de mostrar como **IoT (Internet das Coisas)** pode ser aplicada em esportes, proporcionando interatividade e uma experiência visual para jogadores e espectadores.  
-
-O projeto simula um **sensor de gol** utilizando **botões físicos**, que ao serem pressionados, atualizam o placar, acendem um LED correspondente e emitem um som de buzzer para sinalizar a pontuação. O placar é exibido em um **LCD 16x2 com interface I2C**, tornando a visualização clara e imediata.
-
----
-
-## Arquitetura Proposta
-
-### Diagrama do Sistema
-![Diagrama do Placar de Jogo](img/mapa.png)
-
-### Explicação dos Componentes
-1. **Botões físicos (IoT devices)**: Simulam os sensores de gol para cada time. Cada vez que um botão é pressionado, envia um sinal digital ao Arduino.  
-2. **Arduino Uno (Backend)**: Processa os sinais dos botões, atualiza o LCD, aciona LEDs e toca o buzzer.  
-3. **LEDs (Frontend visual)**: Pisca rapidamente quando um gol é marcado, oferecendo feedback visual instantâneo.  
-4. **Buzzer (Frontend sonoro)**: Emite som curto para indicar a pontuação, reforçando a sinalização do gol.  
-5. **LCD 16x2 I2C (Frontend visual)**: Exibe o placar atualizado em tempo real para ambos os times.
-
-Essa arquitetura permite **interatividade em tempo real**, resposta imediata a eventos e visualização clara do placar, mantendo baixo custo e simplicidade de implementação.
+## 📘 Sumário
+- [Descrição do Projeto](#-descrição-do-projeto)
+- [Arquitetura do Sistema](#-arquitetura-do-sistema)
+- [Componentes Utilizados](#-componentes-utilizados)
+- [Tecnologias Envolvidas](#-tecnologias-envolvidas)
+- [Fluxo de Comunicação MQTT](#-fluxo-de-comunicação-mqtt)
+- [Demonstração em Vídeo](#-demonstração-em-vídeo)
+- [Execução no Wokwi](#-execução-no-wokwi)
+- [Integração com MyMQTT](#-integração-com-mymqtt)
+- [Resultados e Prints](#-resultados-e-prints)
+- [Reprodutibilidade e Deploy](#-reprodutibilidade-e-deploy)
+- [Conclusão e Aprendizados](#-conclusão-e-aprendizados)
 
 ---
 
-## Recursos Necessários
+## 🧠 Descrição do Projeto
 
-### Hardware
-- 1 Arduino Uno  
-- 1 LCD I2C 16x2  
-- 2 Botões físicos (simulando sensores de gol)  
-- 2 LEDs (um para cada time)  
-- 1 Buzzer  
-- Jumpers e resistores  
+O **Placar de Jogo Conectado** é um sistema IoT desenvolvido com **ESP32**, **LCD I2C**, **LEDs**, **buzzer** e **botões físicos**, que comunica-se via **protocolo MQTT** com um servidor remoto.
 
-### Software
-- Arduino IDE  
-- Biblioteca **LiquidCrystal_I2C**  
+A proposta é demonstrar, na prática, o uso de **mensageria MQTT** para **transmitir dados em tempo real**, controlando o placar remotamente através de um **aplicativo MQTT** e exibindo as atualizações diretamente no **display físico**.
 
-### Plataformas de Simulação
-- **Wokwi Arduino Simulator** ([Clique aqui para simulação](https://wokwi.com/projects/442301501864629249))  
+🔗 **Simulação oficial:** [Abrir projeto no Wokwi](https://wokwi.com/projects/446825400114712577)
 
 ---
 
-## Instruções de Uso
+## 🧩 Arquitetura do Sistema
 
-1. Conecte o Arduino aos componentes conforme o diagrama.  
-2. Certifique-se de que os botões estão funcionando como **sensores de gol**.  
-3. Ligue o Arduino ao computador ou fonte de energia.  
-4. Abra o código no Arduino IDE e faça o upload.  
-5. Ao iniciar, o LCD exibirá **“Placar de Jogo”** por 2 segundos.  
-6. Para marcar um gol, pressione o botão correspondente ao time:  
-   - O LED piscará.  
-   - O buzzer emitirá um som curto.  
-   - O LCD será atualizado com o novo placar.  
-7. Para teste sem hardware, utilize o **Wokwi Simulator** configurando os componentes virtuais.
+```mermaid
+graph TD
+A[Botão Time A/B] -->|Incrementa Gol| B(ESP32)
+B -->|Publica via MQTT| C((Broker - 52.86.16.147))
+C -->|Recebe comando| D[Aplicativo MyMQTT]
+D -->|Envia mensagens (golA/golB/reset)| C
+C -->|Repasse ao ESP32| B
+B -->|Atualiza LCD + LED + Buzzer| E[LCD Display 16x2]
+🧰 Componentes Utilizados
+Componente	Função	Quantidade
+ESP32 DevKit	Microcontrolador principal	1
+Display LCD 16x2 (I2C)	Exibição do placar	1
+LED Vermelho	Indicação Time A	1
+LED Azul	Indicação Time B	1
+Buzzer	Alerta sonoro a cada gol	1
+Botão Push	Gol Time A	1
+Botão Push	Gol Time B	1
+Wi-Fi (Wokwi Guest)	Comunicação MQTT	-
 
-### Dicas e Comandos Úteis
-- Certifique-se de que os botões estão em **INPUT_PULLUP** para evitar leituras falsas.  
-- Ajuste o `debounceDelay` se os botões registrarem múltiplos sinais por um clique.  
-- Com **Arduino CLI**:
-```bash
-arduino-cli lib update-index
-arduino-cli lib install "LiquidCrystal_I2C"
-arduino-cli compile --fqbn arduino:avr:uno PlacarDeJogo.ino
-arduino-cli upload -p /dev/ttyUSB0 --fqbn arduino:avr:uno PlacarDeJogo.ino
+💻 Tecnologias Envolvidas
+Linguagem: C++ (Arduino)
 
+Plataforma: Wokwi IoT Simulator
 
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+Protocolo de Comunicação: MQTT
 
-// Inicializa o LCD 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+Broker MQTT: 52.86.16.147:1883
 
-// Botões simulando sensores de gol
-const int botaoTimeA = 7;
-const int botaoTimeB = 8;
+Bibliotecas utilizadas:
 
-// LEDs para sinalizar gol
-const int ledTimeA = 9;
-const int ledTimeB = 10;
+WiFi.h
 
-// Buzzer
-const int buzzer = 6;
+PubSubClient.h
 
-// Contadores de gols
-int golsTimeA = 0;
-int golsTimeB = 0;
+LiquidCrystal_I2C.h
 
-// Debounce
-unsigned long ultimoTempoA = 0;
-unsigned long ultimoTempoB = 0;
-const unsigned long debounceDelay = 200; 
+Wire.h
 
-void setup() {
-  pinMode(botaoTimeA, INPUT_PULLUP);
-  pinMode(botaoTimeB, INPUT_PULLUP);
-  pinMode(ledTimeA, OUTPUT);
-  pinMode(ledTimeB, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-  lcd.begin(16, 2);
-  lcd.backlight();
-  lcd.setCursor(0, 0);
-  lcd.print("Placar de Jogo");
-  delay(2000);
-  atualizarPlacar();
+time.h
+
+🔄 Fluxo de Comunicação MQTT
+Tipo	Tópico	Função
+Publicação (ESP32 → Broker)	/TEF/placar001/attrs	Envia o placar atualizado em JSON
+Assinatura (Broker → ESP32)	/TEF/placar001/cmd	Recebe comandos remotos (golA, golB, reset)
+
+Exemplo de payload publicado:
+
+json
+Copiar código
+{
+  "TimeA": 2,
+  "TimeB": 1,
+  "Data": "2025-11-05 20:15:00"
 }
+🎥 Demonstração em Vídeo
+🎬 Assista ao vídeo completo de funcionamento (YouTube):
+👉 Link do vídeo — Adicionar aqui
 
-void loop() {
-  unsigned long tempoAtual = millis();
-  
-  if(digitalRead(botaoTimeA) == LOW && tempoAtual - ultimoTempoA > debounceDelay){
-    golsTimeA++;
-    piscarLed(ledTimeA);
-    tocarBuzzer();
-    atualizarPlacar();
-    ultimoTempoA = tempoAtual;
-  }
-  
-  if(digitalRead(botaoTimeB) == LOW && tempoAtual - ultimoTempoB > debounceDelay){
-    golsTimeB++;
-    piscarLed(ledTimeB);
-    tocarBuzzer();
-    atualizarPlacar();
-    ultimoTempoB = tempoAtual;
-  }
-}
+📌 O vídeo deve mostrar:
 
-void atualizarPlacar(){
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Time A: ");
-  lcd.print(golsTimeA);
-  lcd.setCursor(0, 1);
-  lcd.print("Time B: ");
-  lcd.print(golsTimeB);
-}
+A simulação completa no Wokwi
 
-void piscarLed(int led){
-  digitalWrite(led, HIGH);
-  delay(200);
-  digitalWrite(led, LOW);
-}
+O funcionamento dos botões, LEDs e buzzer
 
-void tocarBuzzer(){
-  tone(buzzer, 1000, 200); 
-}
+A interação em tempo real com o aplicativo MyMQTT
+
+O envio e recebimento de mensagens via MQTT
+
+⚙️ Execução no Wokwi
+🔹 Passo 1 — Acessar o projeto
+Abrir Simulação no Wokwi
+
+🔹 Passo 2 — Iniciar a simulação
+Clique em Start Simulation e aguarde a conexão Wi-Fi e MQTT.
+O monitor serial exibirá:
+
+nginx
+Copiar código
+Conectando ao Wi-Fi...
+Wi-Fi conectado!
+Conectando ao broker MQTT... conectado!
+🔹 Passo 3 — Visualizar o display
+O LCD mostrará:
+
+less
+Copiar código
+Placar Conectado
+Time A: 0
+Time B: 0
+🔹 Passo 4 — Testar interações
+Pressione o botão do Time A (GPIO 14) → incrementa +1 para o Time A
+
+Pressione o botão do Time B (GPIO 27) → incrementa +1 para o Time B
+
+A cada gol:
+
+O LED correspondente pisca
+
+O buzzer toca
+
+O novo placar é enviado via MQTT
+
+📸 (Inserir aqui imagem do display Wokwi)
+![Simulação Wokwi](docs/prints/wokwi-simulacao.png)
+
+📱 Integração com MyMQTT (Android)
+🔧 Passo 1 — Instalar e configurar o app
+Baixe o MyMQTT na Google Play Store.
+
+Vá em Settings (Engrenagem).
+
+Configure:
+
+Broker Address: 52.86.16.147
+
+Port: 1883
+
+Client ID: placar001
+
+Clique em Connect e aguarde a mensagem de conexão bem-sucedida.
+
+🔧 Passo 2 — Adicionar os tópicos
+Subscribe: /TEF/placar001/attrs
+
+Publish: /TEF/placar001/cmd
+
+💬 Passo 3 — Testar comandos
+Envie as seguintes mensagens:
+
+Comando	Ação
+golA	+1 gol no Time A
+golB	+1 gol no Time B
+reset	Zera o placar
+
+📸 (Inserir aqui imagem do app MyMQTT com o comando “golA”)
+![MyMQTT App](docs/prints/mqtt-app.png)
+
+🖼️ Resultados e Prints
+📊 Publicação MQTT no monitor serial
+css
+Copiar código
+Comando recebido: golA
+Placar -> A: 1 | B: 0
+Publicado no FIWARE: {"TimeA":1,"TimeB":0,"Data":"2025-11-05 20:15:00"}
+📸 (Inserir print do monitor serial)
+![Monitor Serial](docs/prints/serial-output.png)
+
+🔁 Reprodutibilidade e Deploy
+✅ Para rodar o projeto localmente:
+Clone o repositório:
+
+bash
+Copiar código
+git clone https://github.com/SEU-USUARIO/placar-conectado.git
+Abra o projeto no Wokwi.
+
+Cole o código main.cpp no editor.
+
+Clique em Start Simulation.
+
+No celular, conecte o MyMQTT e teste os comandos.
+
+📁 Estrutura recomendada do repositório:
+
+css
+Copiar código
+placar-conectado/
+├── src/main.cpp
+├── docs/prints/
+│   ├── wokwi-simulacao.png
+│   ├── mqtt-app.png
+│   ├── serial-output.png
+│   └── lcd-display.png
+└── README.md
+🧾 Resultados da PoC (Proof of Concept)
+✅ Comunicação IoT via MQTT 100% funcional
+✅ Integração entre hardware (ESP32) e software (app MQTT)
+✅ Atualização em tempo real do placar e exibição no LCD
+✅ Feedback visual (LEDs) e sonoro (buzzer)
+✅ Arquitetura totalmente reprodutível no Wokwi
+
+🧠 Conclusão e Aprendizados
+O projeto Placar de Jogo Conectado demonstra, de forma prática, a aplicabilidade do protocolo MQTT em sistemas IoT, permitindo controle remoto e sincronização em tempo real entre dispositivos físicos e aplicações de software.
+
+Essa implementação serviu como um exercício completo de:
+
+Comunicação MQTT cliente-servidor
+
+Integração de sensores e atuadores
+
+Uso de simulação virtual (Wokwi)
+
+Reprodutibilidade via GitHub
+
+O resultado é um sistema confiável, interativo e escalável, que pode ser facilmente adaptado para outros contextos IoT, como controle de acesso, monitoramento de ambiente ou sistemas esportivos inteligentes.
+
+📸 Espaços reservados para imagens
+
+bash
+Copiar código
+/docs/prints/wokwi-simulacao.png
+/docs/prints/lcd-display.png
+/docs/prints/mqtt-app.png
+/docs/prints/serial-output.png
+🎥 Espaço reservado para o vídeo no YouTube
+
+arduino
+Copiar código
+https://youtube.com/SEU_VIDEO_AQUI
+Copiar código

@@ -49,7 +49,7 @@ Ele permite registrar gols localmente através de **botões físicos** ou remota
 
 ## 📸 Simução Wokwi
 
-[<img width="724" height="502" alt="image" src="https://github.com/user-attachments/assets/0ca11918-ac7b-4d43-aa4c-e28d02986c54" />]
+<img width="724" height="502" alt="image" src="https://github.com/user-attachments/assets/0ca11918-ac7b-4d43-aa4c-e28d02986c54" />
 
 ---
 

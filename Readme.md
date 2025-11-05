@@ -47,7 +47,7 @@ Ele permite registrar gols localmente através de **botões físicos** ou remota
 | LCD I2C SDA  | GPIO 21    | Comunicação I2C           |
 | LCD I2C SCL  | GPIO 22    | Comunicação I2C           |
 
-📸 **[INSERIR AQUI IMAGEM 1: Diagrama do circuito no Wokwi]**
+📸 **[<img width="724" height="502" alt="image" src="https://github.com/user-attachments/assets/0ca11918-ac7b-4d43-aa4c-e28d02986c54" />]**
 
 ---
 

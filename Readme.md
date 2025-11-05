@@ -1,7 +1,7 @@
 # 🏆 Placar de Jogo Conectado — ESP32 + MQTT + LCD I2C
 
-> Projeto desenvolvido como parte das atividades da disciplina de **IoT & Sistemas Embarcados**, com foco em **integração de hardware e nuvem via protocolo MQTT**.  
-> A solução apresenta um **placar digital inteligente**, conectado a um **broker MQTT**, capaz de atualizar os resultados de forma remota e em tempo real.
+> Projeto desenvolvido por alunos da **FIAP** como parte das atividades de **IoT & Sistemas Embarcados**, integrando hardware e nuvem via **protocolo MQTT**.  
+> O sistema simula um **placar digital inteligente**, capaz de se comunicar com um **broker MQTT** e um **aplicativo móvel (MyMQTT)** para atualização remota de resultados esportivos em tempo real.
 
 ---
 
@@ -21,23 +21,23 @@
 - [Arquitetura do Sistema](#-arquitetura-do-sistema)
 - [Componentes Utilizados](#-componentes-utilizados)
 - [Tecnologias Envolvidas](#-tecnologias-envolvidas)
-- [Fluxo de Comunicação MQTT](#-fluxo-de-comunicação-mqtt)
-- [Demonstração em Vídeo](#-demonstração-em-vídeo)
+- [Código-Fonte Completo e Explicado](#-código-fonte-completo-e-explicado)
 - [Execução no Wokwi](#-execução-no-wokwi)
 - [Integração com MyMQTT](#-integração-com-mymqtt)
+- [Demonstração em Vídeo](#-demonstração-em-vídeo)
 - [Resultados e Prints](#-resultados-e-prints)
-- [Reprodutibilidade e Deploy](#-reprodutibilidade-e-deploy)
 - [Conclusão e Aprendizados](#-conclusão-e-aprendizados)
 
 ---
 
 ## 🧠 Descrição do Projeto
 
-O **Placar de Jogo Conectado** é um sistema IoT desenvolvido com **ESP32**, **LCD I2C**, **LEDs**, **buzzer** e **botões físicos**, que comunica-se via **protocolo MQTT** com um servidor remoto.
+O **Placar de Jogo Conectado** é um sistema IoT que utiliza o **ESP32** para registrar, exibir e compartilhar em tempo real o resultado de uma partida.  
+Com o uso do **protocolo MQTT**, o dispositivo pode **receber comandos remotos** (como `golA`, `golB` e `reset`) através do aplicativo **MyMQTT** e **publicar o placar atualizado** em formato JSON.
 
-A proposta é demonstrar, na prática, o uso de **mensageria MQTT** para **transmitir dados em tempo real**, controlando o placar remotamente através de um **aplicativo MQTT** e exibindo as atualizações diretamente no **display físico**.
-
-🔗 **Simulação oficial:** [Abrir projeto no Wokwi](https://wokwi.com/projects/446825400114712577)
+📡 **Comunicação em tempo real**  
+📱 **Controle remoto via app MQTT**  
+🔊 **Feedback visual e sonoro com LEDs e buzzer**
 
 ---
 
@@ -60,18 +60,19 @@ LED Azul	Indicação Time B	1
 Buzzer	Alerta sonoro a cada gol	1
 Botão Push	Gol Time A	1
 Botão Push	Gol Time B	1
-Wi-Fi (Wokwi Guest)	Comunicação MQTT	-
 
 💻 Tecnologias Envolvidas
 Linguagem: C++ (Arduino)
 
-Plataforma: Wokwi IoT Simulator
+Simulação: Wokwi IoT Simulator
 
-Protocolo de Comunicação: MQTT
+Protocolo: MQTT
 
 Broker MQTT: 52.86.16.147:1883
 
-Bibliotecas utilizadas:
+App de Teste: MyMQTT (Android)
+
+Bibliotecas:
 
 WiFi.h
 
@@ -83,168 +84,270 @@ Wire.h
 
 time.h
 
-🔄 Fluxo de Comunicação MQTT
-Tipo	Tópico	Função
-Publicação (ESP32 → Broker)	/TEF/placar001/attrs	Envia o placar atualizado em JSON
-Assinatura (Broker → ESP32)	/TEF/placar001/cmd	Recebe comandos remotos (golA, golB, reset)
+🧾 Código-Fonte Completo e Explicado
+A seguir, o código-fonte do projeto com explicações por seção:
 
-Exemplo de payload publicado:
-
-json
+cpp
 Copiar código
-{
-  "TimeA": 2,
-  "TimeB": 1,
-  "Data": "2025-11-05 20:15:00"
+// ======= INFORMAÇÕES =======
+// Autor: Luiz Morais (base: Fábio Cabrini)
+// Projeto: Placar de jogo conectado (ESP32 + LCD + MQTT)
+// =======================================
+
+#include <WiFi.h>                // Conexão com rede Wi-Fi
+#include <PubSubClient.h>        // Cliente MQTT
+#include <Wire.h>                // Comunicação I2C
+#include <LiquidCrystal_I2C.h>   // Controle do display LCD
+#include "time.h"                // Para sincronização NTP (data/hora)
+
+// ======= CONFIGURAÇÕES EDITÁVEIS =======
+const char* SSID = "Wokwi-GUEST"; // Rede simulada do Wokwi
+const char* PASSWORD = "";         // Sem senha
+const char* BROKER_MQTT = "52.86.16.147";
+const int BROKER_PORT = 1883;
+
+// ======= TÓPICOS MQTT =======
+const char* TOPICO_SUBSCRIBE = "/TEF/placar001/cmd";   // Recebe comandos
+const char* TOPICO_PUBLISH   = "/TEF/placar001/attrs"; // Envia placar
+
+// ======= IDENTIFICAÇÃO =======
+const char* ID_MQTT = "placar001";
+
+// ======= LCD =======
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // Endereço I2C do display
+
+// ======= BOTÕES, LEDS, BUZZER =======
+const int botaoTimeA = 14;
+const int botaoTimeB = 27;
+const int ledTimeA = 12;
+const int ledTimeB = 13;
+const int buzzer = 26;
+
+// ======= VARIÁVEIS DE CONTROLE =======
+int golsTimeA = 0;
+int golsTimeB = 0;
+unsigned long ultimoTempoA = 0;
+unsigned long ultimoTempoB = 0;
+const unsigned long debounceDelay = 200;
+
+// ======= REDE / MQTT =======
+WiFiClient espClient;
+PubSubClient MQTT(espClient);
+
+// ======= NTP (para timestamp) =======
+const char* ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = -3 * 3600;  // Horário de Brasília
+const int daylightOffset_sec = 0;
+🔧 Funções de Conexão Wi-Fi e MQTT
+Garantem a reconexão automática caso a conexão seja perdida.
+
+cpp
+Copiar código
+void reconectWiFi() {
+  if (WiFi.status() == WL_CONNECTED) return;
+  Serial.println("Conectando ao Wi-Fi...");
+  WiFi.begin(SSID, PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi conectado!");
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
 }
-🎥 Demonstração em Vídeo
-🎬 Assista ao vídeo completo de funcionamento (YouTube):
-👉 Link do vídeo — Adicionar aqui
 
-📌 O vídeo deve mostrar:
+void reconnectMQTT() {
+  while (!MQTT.connected()) {
+    Serial.print("Conectando ao broker MQTT...");
+    if (MQTT.connect(ID_MQTT)) {
+      Serial.println(" conectado!");
+      MQTT.subscribe(TOPICO_SUBSCRIBE);
+    } else {
+      Serial.println(" falhou, tentando novamente...");
+      delay(2000);
+    }
+  }
+}
 
-A simulação completa no Wokwi
+void VerificaConexoesWiFIEMQTT() {
+  if (WiFi.status() != WL_CONNECTED) reconectWiFi();
+  if (!MQTT.connected()) reconnectMQTT();
+}
+💬 Callback MQTT — Recebimento de Comandos
+Recebe mensagens MQTT e executa ações (gol, reset).
 
-O funcionamento dos botões, LEDs e buzzer
+cpp
+Copiar código
+void mqtt_callback(char* topic, byte* payload, unsigned int length) {
+  String msg;
+  for (int i = 0; i < length; i++) msg += (char)payload[i];
+  Serial.print("Comando recebido: "); Serial.println(msg);
 
-A interação em tempo real com o aplicativo MyMQTT
+  if (msg == "reset") {
+    golsTimeA = 0; golsTimeB = 0;
+  } else if (msg == "golA") {
+    golsTimeA++; piscarLed(ledTimeA); tocarBuzzer();
+  } else if (msg == "golB") {
+    golsTimeB++; piscarLed(ledTimeB); tocarBuzzer();
+  }
+  atualizarPlacar();
+  publicarPlacar();
+}
+⚙️ Funções de Hardware
+Atualizam o LCD, piscam LEDs e acionam o buzzer.
 
-O envio e recebimento de mensagens via MQTT
+cpp
+Copiar código
+void atualizarPlacar() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Time A: "); lcd.print(golsTimeA);
+  lcd.setCursor(0, 1);
+  lcd.print("Time B: "); lcd.print(golsTimeB);
+  Serial.printf("Placar -> A: %d | B: %d\n", golsTimeA, golsTimeB);
+}
 
+void piscarLed(int led) {
+  digitalWrite(led, HIGH); delay(200); digitalWrite(led, LOW);
+}
+
+void tocarBuzzer() {
+  tone(buzzer, 1000, 200);
+}
+🌐 Publicação do Placar no Broker
+cpp
+Copiar código
+void publicarPlacar() {
+  struct tm timeinfo;
+  getLocalTime(&timeinfo);
+  char timeString[25];
+  strftime(timeString, sizeof(timeString), "%Y-%m-%d %H:%M:%S", &timeinfo);
+
+  String payload = "{";
+  payload += "\"TimeA\": " + String(golsTimeA) + ",";
+  payload += "\"TimeB\": " + String(golsTimeB) + ",";
+  payload += "\"Data\": \"" + String(timeString) + "\"}";
+  
+  MQTT.publish(TOPICO_PUBLISH, payload.c_str());
+  Serial.println("Publicado no FIWARE: " + payload);
+}
+🚀 Setup e Loop Principal
+cpp
+Copiar código
+void setup() {
+  Serial.begin(115200);
+  pinMode(botaoTimeA, INPUT_PULLUP);
+  pinMode(botaoTimeB, INPUT_PULLUP);
+  pinMode(ledTimeA, OUTPUT);
+  pinMode(ledTimeB, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.print("Placar Conectado");
+  delay(2000);
+
+  WiFi.mode(WIFI_STA);
+  reconectWiFi();
+  MQTT.setServer(BROKER_MQTT, BROKER_PORT);
+  MQTT.setCallback(mqtt_callback);
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  atualizarPlacar();
+  publicarPlacar();
+}
+
+void loop() {
+  VerificaConexoesWiFIEMQTT();
+  MQTT.loop();
+  unsigned long tempoAtual = millis();
+
+  if (digitalRead(botaoTimeA) == LOW && tempoAtual - ultimoTempoA > debounceDelay) {
+    golsTimeA++; piscarLed(ledTimeA); tocarBuzzer();
+    atualizarPlacar(); publicarPlacar();
+    ultimoTempoA = tempoAtual;
+  }
+
+  if (digitalRead(botaoTimeB) == LOW && tempoAtual - ultimoTempoB > debounceDelay) {
+    golsTimeB++; piscarLed(ledTimeB); tocarBuzzer();
+    atualizarPlacar(); publicarPlacar();
+    ultimoTempoB = tempoAtual;
+  }
+}
 ⚙️ Execução no Wokwi
-🔹 Passo 1 — Acessar o projeto
-Abrir Simulação no Wokwi
+Acesse o projeto:
+🔗 https://wokwi.com/projects/446825400114712577
 
-🔹 Passo 2 — Iniciar a simulação
-Clique em Start Simulation e aguarde a conexão Wi-Fi e MQTT.
-O monitor serial exibirá:
+Clique em Start Simulation.
 
-nginx
-Copiar código
-Conectando ao Wi-Fi...
-Wi-Fi conectado!
-Conectando ao broker MQTT... conectado!
-🔹 Passo 3 — Visualizar o display
-O LCD mostrará:
+Observe o LCD mostrando o placar inicial.
 
-less
-Copiar código
-Placar Conectado
-Time A: 0
-Time B: 0
-🔹 Passo 4 — Testar interações
-Pressione o botão do Time A (GPIO 14) → incrementa +1 para o Time A
+Pressione os botões físicos para marcar gols.
 
-Pressione o botão do Time B (GPIO 27) → incrementa +1 para o Time B
+Veja as atualizações também no MyMQTT App.
 
-A cada gol:
+📸 (Espaço reservado para imagem do Wokwi)
+![Wokwi Simulation](docs/prints/wokwi-simulacao.png)
 
-O LED correspondente pisca
+📱 Integração com MyMQTT
+🔧 Passos:
+Baixe o app MyMQTT na Google Play.
 
-O buzzer toca
+Vá em Settings → Connection
 
-O novo placar é enviado via MQTT
-
-📸 (Inserir aqui imagem do display Wokwi)
-![Simulação Wokwi](docs/prints/wokwi-simulacao.png)
-
-📱 Integração com MyMQTT (Android)
-🔧 Passo 1 — Instalar e configurar o app
-Baixe o MyMQTT na Google Play Store.
-
-Vá em Settings (Engrenagem).
-
-Configure:
-
-Broker Address: 52.86.16.147
+Broker: 52.86.16.147
 
 Port: 1883
 
 Client ID: placar001
 
-Clique em Connect e aguarde a mensagem de conexão bem-sucedida.
+Conecte e adicione:
 
-🔧 Passo 2 — Adicionar os tópicos
 Subscribe: /TEF/placar001/attrs
 
 Publish: /TEF/placar001/cmd
 
-💬 Passo 3 — Testar comandos
-Envie as seguintes mensagens:
-
+💬 Comandos disponíveis:
 Comando	Ação
-golA	+1 gol no Time A
-golB	+1 gol no Time B
+golA	Adiciona 1 gol ao Time A
+golB	Adiciona 1 gol ao Time B
 reset	Zera o placar
 
-📸 (Inserir aqui imagem do app MyMQTT com o comando “golA”)
-![MyMQTT App](docs/prints/mqtt-app.png)
+📸 (Espaço reservado para print do MyMQTT)
+![MyMQTT Interface](docs/prints/mqtt-app.png)
 
-🖼️ Resultados e Prints
-📊 Publicação MQTT no monitor serial
-css
-Copiar código
-Comando recebido: golA
-Placar -> A: 1 | B: 0
-Publicado no FIWARE: {"TimeA":1,"TimeB":0,"Data":"2025-11-05 20:15:00"}
-📸 (Inserir print do monitor serial)
-![Monitor Serial](docs/prints/serial-output.png)
+🎥 Demonstração em Vídeo
+🎬 Assista ao vídeo completo de funcionamento:
+👉 Link do vídeo — Adicionar aqui
 
-🔁 Reprodutibilidade e Deploy
-✅ Para rodar o projeto localmente:
-Clone o repositório:
+📊 Resultados e Prints
+📸 (Espaço reservado para prints do projeto)
 
-bash
-Copiar código
-git clone https://github.com/SEU-USUARIO/placar-conectado.git
-Abra o projeto no Wokwi.
+Wokwi LCD ativo
 
-Cole o código main.cpp no editor.
+Monitor serial
 
-Clique em Start Simulation.
+App MQTT enviando comandos
 
-No celular, conecte o MyMQTT e teste os comandos.
-
-📁 Estrutura recomendada do repositório:
-
-css
-Copiar código
-placar-conectado/
-├── src/main.cpp
-├── docs/prints/
-│   ├── wokwi-simulacao.png
-│   ├── mqtt-app.png
-│   ├── serial-output.png
-│   └── lcd-display.png
-└── README.md
-🧾 Resultados da PoC (Proof of Concept)
-✅ Comunicação IoT via MQTT 100% funcional
-✅ Integração entre hardware (ESP32) e software (app MQTT)
-✅ Atualização em tempo real do placar e exibição no LCD
-✅ Feedback visual (LEDs) e sonoro (buzzer)
-✅ Arquitetura totalmente reprodutível no Wokwi
+LEDs e buzzer em ação
 
 🧠 Conclusão e Aprendizados
-O projeto Placar de Jogo Conectado demonstra, de forma prática, a aplicabilidade do protocolo MQTT em sistemas IoT, permitindo controle remoto e sincronização em tempo real entre dispositivos físicos e aplicações de software.
+O projeto demonstrou a eficiência do protocolo MQTT em aplicações IoT, integrando hardware físico e controle remoto de forma sincronizada e confiável.
+Foi possível compreender conceitos fundamentais como:
 
-Essa implementação serviu como um exercício completo de:
+Comunicação publisher/subscriber
 
-Comunicação MQTT cliente-servidor
+Reconexão automática de rede e broker
 
-Integração de sensores e atuadores
+Envio de dados em formato JSON
 
-Uso de simulação virtual (Wokwi)
-
-Reprodutibilidade via GitHub
-
-O resultado é um sistema confiável, interativo e escalável, que pode ser facilmente adaptado para outros contextos IoT, como controle de acesso, monitoramento de ambiente ou sistemas esportivos inteligentes.
+Feedback multimodal com LCD, LEDs e buzzer
 
 📸 Espaços reservados para imagens
 
 bash
 Copiar código
 /docs/prints/wokwi-simulacao.png
-/docs/prints/lcd-display.png
 /docs/prints/mqtt-app.png
 /docs/prints/serial-output.png
 🎥 Espaço reservado para o vídeo no YouTube

@@ -67,7 +67,6 @@ Ele permite registrar gols localmente através de **botões físicos** ou remota
 | `golB`        | Incrementa gols do Time B  |
 | `reset`       | Zera o placar              |
 
-📸 **[INSERIR AQUI IMAGEM 2: Print do aplicativo MyMQTT enviando e recebendo mensagens]**
 
 ---
 
@@ -84,7 +83,7 @@ Ele permite registrar gols localmente através de **botões físicos** ou remota
 5. Observe o **buzzer** e os **LEDs** piscando a cada gol.  
 6. No **Serial Monitor**, acompanhe as mensagens publicadas no broker MQTT.
 
-📸 **[INSERIR AQUI IMAGEM 3: Simulação rodando no Wokwi com o LCD mostrando o placar]**
+📸 **[<img width="724" height="502" alt="image" src="https://github.com/user-attachments/assets/0ca11918-ac7b-4d43-aa4c-e28d02986c54" />]**
 
 ---
 

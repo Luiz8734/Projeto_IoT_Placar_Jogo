@@ -18,9 +18,11 @@
 
 ## 🎯 Objetivo do Projeto
 
-O projeto tem como objetivo demonstrar a integração prática entre o **ESP32**, o **protocolo MQTT** e o **display LCD I2C**, simulando um **placar eletrônico conectado à Internet**.
+O projeto tem como objetivo demonstrar a integração prática entre o **ESP32**, o **protocolo MQTT** e o **display LCD I2C**, simulando um **placar eletrônico conectado à Internet**. Além disso, inclui uma **aplicação web** desenvolvida em Flask para visualização dos dados do placar em tempo real.
 
 ### Principais Características:
+
+#### Hardware (ESP32)
 - **Controle Local:** Registro de gols através de botões físicos conectados ao ESP32
 - **Controle Remoto:** Comandos enviados via aplicativo móvel (MyMQTT) através do protocolo MQTT
 - **Exibição em Tempo Real:** Display LCD I2C mostra o placar atualizado instantaneamente
@@ -28,17 +30,156 @@ O projeto tem como objetivo demonstrar a integração prática entre o **ESP32**
 - **Feedback Multissensorial:** LEDs e buzzer fornecem feedback visual e sonoro a cada gol registrado
 - **Sincronização com NTP:** Integração com servidor NTP para registrar data/hora precisa de cada evento
 
+#### Software (Aplicação Web)
+- **Interface Web:** Aplicação Flask com interface moderna e responsiva
+- **Visualização em Tempo Real:** Placar atualizado automaticamente via MQTT
+- **Gráficos Dinâmicos:** Geração de gráficos de barras para análise visual dos dados
+- **API REST:** Endpoints para consulta dos dados do placar
+- **Design Moderno:** Interface com tema escuro e animações suaves
+
 ---
 
 ## ⚙️ Funcionalidades Principais
 
+### 🔧 Hardware (ESP32)
 ✅ Conexão automática ao **Wi-Fi (Wokwi-GUEST)**  
 ✅ Comunicação com **broker MQTT** (IP: `52.86.16.147`)  
 ✅ **Publicação e recebimento** de mensagens MQTT  
 ✅ Exibição dos dados no **LCD I2C (16x2)**  
 ✅ Controle por **botões físicos** (para simular gols)  
 ✅ **LEDs** e **buzzer** para alertas visuais e sonoros  
-✅ Envio automático de **timestamp (data/hora NTP)** nas publicações  
+✅ Envio automático de **timestamp (data/hora NTP)** nas publicações
+
+### 🌐 Aplicação Web (Flask)
+✅ **Interface web moderna** com tema escuro e design responsivo  
+✅ **Placar em tempo real** atualizado automaticamente a cada segundo  
+✅ **Gráfico de barras** gerado dinamicamente com matplotlib/seaborn  
+✅ **Conexão MQTT** para receber dados do placar em tempo real  
+✅ **API REST** para consulta dos dados do placar (endpoint `/dados`)  
+✅ **Visualizações animadas** com efeitos de transição ao atualizar placar  
+
+---
+
+## 🌐 Aplicação Web Flask
+
+O projeto inclui uma **aplicação web** desenvolvida em Flask que consome os dados do placar via MQTT e exibe uma interface moderna e interativa no navegador.
+
+### 📋 Características da Aplicação Web
+
+- **Interface Responsiva:** Design adaptável para desktop, tablet e mobile
+- **Tema Escuro:** Interface moderna com paleta de cores escura
+- **Atualização Automática:** Placar atualiza a cada 1 segundo automaticamente
+- **Gráfico Dinâmico:** Gráfico de barras horizontal gerado em tempo real
+- **Animações Suaves:** Efeitos de transição quando o placar muda
+- **Conexão MQTT:** Subscriber no tópico `/TEF/placar001/attrs` para receber atualizações
+
+### 🚀 Como Executar a Aplicação Web
+
+#### Pré-requisitos
+- Python 3.7 ou superior
+- pip (gerenciador de pacotes Python)
+
+#### Instalação das Dependências
+
+1. **Clone o repositório** (se ainda não tiver):
+```bash
+git clone <url-do-repositorio>
+cd Projeto_IoT_Placar_Jogo-1
+```
+
+2. **Instale as dependências Python:**
+```bash
+pip install flask paho-mqtt matplotlib seaborn
+```
+
+Ou crie um arquivo `requirements.txt` com o seguinte conteúdo:
+```
+Flask==3.0.0
+paho-mqtt==1.6.1
+matplotlib==3.8.2
+seaborn==0.13.0
+```
+
+E instale usando:
+```bash
+pip install -r requirements.txt
+```
+
+#### Executando o Servidor
+
+1. **Execute o arquivo `app.py`:**
+```bash
+python app.py
+```
+
+2. **Acesse no navegador:**
+```
+http://localhost:5000
+```
+
+3. **A aplicação estará rodando e conectada ao broker MQTT!**
+
+### 📡 Rotas da API
+
+| Rota | Método | Descrição | Retorno |
+|------|--------|-----------|---------|
+| `/` | GET | Página principal com interface do placar | HTML (index.html) |
+| `/dados` | GET | Retorna dados atuais do placar em JSON | JSON |
+| `/grafico` | GET | Gera e retorna gráfico de barras (PNG) | Imagem PNG |
+
+#### Exemplo de resposta da rota `/dados`:
+```json
+{
+  "TimeA": 2,
+  "TimeB": 1,
+  "Data": "2025-11-05 18:22:10"
+}
+```
+
+### 🎨 Funcionalidades da Interface Web
+
+#### Placar ao Vivo
+- **Time A e Time B:** Exibição clara dos gols de cada time
+- **Cores diferenciadas:** Verde (#4CAF50) para Time A, Vermelho (#F44336) para Time B
+- **Animação de pulso:** Efeito visual quando o placar é atualizado
+
+#### Gráfico de Barras
+- **Gráfico horizontal:** Visualização intuitiva da comparação entre times
+- **Tema escuro:** Integrado com o design da aplicação
+- **Atualização automática:** Gráfico regenerado a cada atualização do placar
+
+#### Atualização Automática
+- **Polling:** JavaScript faz requisições para `/dados` a cada 1 segundo
+- **Cache busting:** Gráfico atualizado com timestamp para evitar cache
+- **Detecção de mudanças:** Animações só são acionadas quando há mudança real no placar
+
+### 🔧 Arquitetura da Aplicação Web
+
+```
+app.py
+├── Conexão MQTT (Subscriber)
+│   ├── Broker: 52.86.16.147:1883
+│   ├── Tópico: /TEF/placar001/attrs
+│   └── Callback: Atualiza dados_placar
+│
+├── Rotas Flask
+│   ├── / → render_template('index.html')
+│   ├── /dados → jsonify(dados_placar)
+│   └── /grafico → send_file(imagem PNG)
+│
+└── Geração de Gráfico
+    ├── matplotlib + seaborn
+    ├── Tema escuro personalizado
+    └── Exportação para PNG
+```
+
+### 📱 Design Responsivo
+
+A interface se adapta a diferentes tamanhos de tela:
+
+- **Desktop (>768px):** Layout lado a lado (placar + gráfico)
+- **Tablet (480px-768px):** Layout empilhado verticalmente
+- **Mobile (<480px):** Interface otimizada para telas pequenas
 
 ---
 
@@ -564,6 +705,35 @@ void loop() {
 
 ---
 
+## 🚀 Deploy da Aplicação Web
+
+<!-- 
+### 📦 Opções de Deploy
+
+#### Opção 1: Heroku
+[Instruções para deploy no Heroku]
+
+#### Opção 2: Railway
+[Instruções para deploy no Railway]
+
+#### Opção 3: Render
+[Instruções para deploy no Render]
+
+#### Opção 4: PythonAnywhere
+[Instruções para deploy no PythonAnywhere]
+
+#### Opção 5: VPS (DigitalOcean, AWS EC2, etc.)
+[Instruções para deploy em VPS]
+-->
+
+### 🌐 Link do Deploy
+
+**Aplicação disponível em:** [INSERIR URL DO DEPLOY AQUI]
+
+> **Nota:** Adicione aqui o link e as instruções de deploy quando a aplicação estiver no ar.
+
+---
+
 ## 💬 Conclusão
 
 Este projeto demonstra de forma prática e completa a integração entre **hardware embarcado (ESP32)** e **tecnologias de nuvem (MQTT)**, criando uma solução IoT robusta que combina **conectividade sem fio, automação local e interface física interativa**.
@@ -577,6 +747,9 @@ Este projeto demonstra de forma prática e completa a integração entre **hardw
 ✅ **Sincronização Temporal:** Integração com servidores NTP para timestamp preciso  
 ✅ **Robustez:** Sistema com reconexão automática e tratamento de erros  
 ✅ **Simulação Realista:** Uso do Wokwi para prototipagem e teste sem hardware físico  
+✅ **Interface Web:** Aplicação Flask para visualização dos dados do placar em tempo real  
+✅ **Visualizações Gráficas:** Geração dinâmica de gráficos para análise dos dados  
+✅ **Arquitetura Completa:** Sistema IoT completo desde hardware até aplicação web  
 
 ### 🌟 Conceitos Aplicados:
 
@@ -600,6 +773,7 @@ Este projeto pode ser adaptado para diversas aplicações reais:
 
 ### 🎓 Aprendizados Técnicos:
 
+#### Hardware (ESP32)
 - Configuração e uso do ESP32 com WiFi
 - Implementação de clientes MQTT
 - Trabalho com displays LCD via I2C
@@ -609,6 +783,16 @@ Este projeto pode ser adaptado para diversas aplicações reais:
 - Sincronização de tempo via NTP
 - Debugging e monitoramento via Serial
 - Simulação de hardware no ambiente Wokwi
+
+#### Software (Flask)
+- Desenvolvimento de aplicações web com Flask
+- Criação de APIs REST
+- Integração MQTT em aplicações Python
+- Geração de gráficos com matplotlib e seaborn
+- Desenvolvimento de interfaces responsivas com HTML/CSS
+- JavaScript para atualização automática (polling)
+- Tratamento de dados JSON em aplicações web
+- Design de interfaces modernas com tema escuro
 
 O projeto representa uma **solução completa e funcional** que ilustra os principais conceitos de IoT, sendo um excelente ponto de partida para projetos mais complexos e aplicações comerciais.
 

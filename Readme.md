@@ -119,6 +119,11 @@ http://localhost:5000
 
 3. **A aplicação estará rodando e conectada ao broker MQTT!**
 
+### 🌐 Acesso à Aplicação
+
+**Local:** `http://localhost:5000`  
+**Deploy:** [INSERIR URL DO DEPLOY AQUI](INSERIR_URL_DO_DEPLOY_AQUI)
+
 ### 📡 Rotas da API
 
 | Rota | Método | Descrição | Retorno |
@@ -152,6 +157,13 @@ http://localhost:5000
 - **Polling:** JavaScript faz requisições para `/dados` a cada 1 segundo
 - **Cache busting:** Gráfico atualizado com timestamp para evitar cache
 - **Detecção de mudanças:** Animações só são acionadas quando há mudança real no placar
+
+### 📸 Screenshot da Interface Web
+
+<!-- Adicione aqui uma captura de tela da aplicação web -->
+![Interface da Aplicação Web](https://via.placeholder.com/800x500/121212/e0e0e0?text=Placar+Interativo+-+Screenshot)
+
+> **Nota:** Adicione aqui a imagem da interface web. Recomenda-se usar uma captura de tela mostrando o placar e o gráfico em funcionamento.
 
 ### 🔧 Arquitetura da Aplicação Web
 
@@ -707,6 +719,10 @@ void loop() {
 
 ## 🚀 Deploy da Aplicação Web
 
+### 🌐 Link do Deploy
+
+**🔗 Aplicação disponível em:** [INSERIR URL DO DEPLOY AQUI](INSERIR_URL_DO_DEPLOY_AQUI)
+
 <!-- 
 ### 📦 Opções de Deploy
 
@@ -726,11 +742,7 @@ void loop() {
 [Instruções para deploy em VPS]
 -->
 
-### 🌐 Link do Deploy
-
-**Aplicação disponível em:** [INSERIR URL DO DEPLOY AQUI]
-
-> **Nota:** Adicione aqui o link e as instruções de deploy quando a aplicação estiver no ar.
+> **Nota:** Adicione aqui o link do deploy e as instruções quando a aplicação estiver no ar.
 
 ---
 

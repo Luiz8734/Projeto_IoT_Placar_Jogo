@@ -234,9 +234,6 @@ Publica automaticamente os novos valores.
 
 📸 [INSERIR AQUI IMAGEM 6: Console mostrando mensagens MQTT publicadas]
 
-🎥 Demonstração em Vídeo
-📺 Link para o vídeo no YouTube:
-👉 [INSERIR AQUI O LINK DO VÍDEO DE DEMONSTRAÇÃO]
 
 🧾 Créditos e Agradecimentos
 Base do projeto: Prof. Fábio Cabrini

@@ -107,8 +107,7 @@ yaml
 Copiar código
 → Envie `golA`, `golB` ou `reset`.
 
-📸 **[(https://github.com/user-attachments/assets/98f059c5-6bfc-403f-8df7-7d41d02b02cf)
-]**
+📸 <img width="724" height="502" alt="image" src="https://github.com/user-attachments/assets/a036386d-0e47-462d-a10b-3d50c1a7b89f)" />
 
 ---
 

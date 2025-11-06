@@ -107,7 +107,9 @@ yaml
 Copiar código
 → Envie `golA`, `golB` ou `reset`.
 
-📸 <img width="724" height="502" alt="image" src="https://github.com/user-attachments/assets/a036386d-0e47-462d-a10b-3d50c1a7b89f)" />
+## 📸 Aplicativo MyMQTT
+<img width="537" height="860" alt="image" src="https://github.com/user-attachments/assets/8d150978-829f-4672-a8be-9dc35cc40977" />
+
 
 ---
 

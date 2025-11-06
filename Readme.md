@@ -192,7 +192,6 @@ void atualizarPlacar() {
 }
 Mostra os gols no display LCD I2C (16x2) em tempo real.
 
-📸 [INSERIR AQUI IMAGEM 5: LCD mostrando placar atualizado]
 
 🔹 Publicação MQTT
 cpp
@@ -232,28 +231,7 @@ Lê o estado dos botões e atualiza o placar localmente.
 
 Publica automaticamente os novos valores.
 
-📸 [INSERIR AQUI IMAGEM 6: Console mostrando mensagens MQTT publicadas]
 
 
-🧾 Créditos e Agradecimentos
-Base do projeto: Prof. Fábio Cabrini
 
-Adaptação e melhorias: Luiz Antonio Morais e equipe
 
-Instituição: FIAP — Engenharia de Software
-
-Disciplina: IoT & Sistemas Embarcados
-
-💬 Conclusão
-O projeto demonstra a integração prática entre hardware (ESP32) e nuvem (MQTT), criando uma solução IoT que une conectividade, automação e interface física.
-É um excelente exemplo de aplicação real do conceito de Internet das Coisas, com múltiplos dispositivos interagindo em tempo real através de mensagens publish/subscribe.
-
-📸 RESUMO DOS LOCAIS PARA INSERIR IMAGENS
-Etapa	Descrição	Local do README
-1	Circuito completo no Wokwi	Imagem 1
-2	App MyMQTT enviando comandos	Imagem 2
-3	Simulação rodando no Wokwi	Imagem 3
-4	App MyMQTT recebendo atualizações	Imagem 4
-5	LCD mostrando placar atualizado	Imagem 5
-6	Console publicando mensagens MQTT	Imagem 6
-7	Vídeo da demonstração (YouTube)	Link de vídeo

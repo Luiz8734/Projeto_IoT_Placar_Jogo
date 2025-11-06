@@ -597,13 +597,6 @@ Este projeto pode ser adaptado para diversas aplicações reais:
 - **Sistemas de alerta** com notificações em múltiplos dispositivos
 - **Protótipos de automação residencial** com controle local e remoto
 
-### 📚 Valor Educacional:
-
-Este projeto serve como excelente material didático para:
-- Estudantes de **Engenharia de Software** aprendendo IoT
-- Cursos de **Sistemas Embarcados** e **Microcontroladores**
-- Disciplinas de **Redes de Computadores** e **Protocolos de Comunicação**
-- Workshops práticos de **Arduino/ESP32**
 
 ### 🎓 Aprendizados Técnicos:
 
@@ -627,8 +620,6 @@ Esta seção contém o vídeo completo de demonstração do projeto, mostrando t
 
 ### 📺 Vídeo no YouTube
 
-[![Demonstração do Placar Conectado - ESP32 + MQTT](<img width="200" height="100" alt="image" src="https://github.com/user-attachments/assets/f1b7008d-af30-4f1a-ac28-ff2959b8baeb" />)
-
 **Link direto:** 👉 [INSERIR AQUI O LINK DO VÍDEO DE DEMONSTRAÇÃO DO YOUTUBE](https://www.youtube.com/watch?v=VIDEO_ID_HERE)
 
 ### 📋 Conteúdo do Vídeo
@@ -644,11 +635,7 @@ O vídeo demonstra:
 - ✅ **Parte 8:** Demonstração da sincronização NTP e timestamps
 - ✅ **Parte 9:** Teste de reconexão automática após falhas de rede
 - ✅ **Parte 10:** Conclusão e considerações finais
-
----
-
-**Nota:** Para adicionar o vídeo, substitua `VIDEO_ID_HERE` pelo ID do seu vídeo do YouTube (parte após `watch?v=` na URL do YouTube).
-
+- 
 ---
 
 ## 🧾 Créditos e Agradecimentos  

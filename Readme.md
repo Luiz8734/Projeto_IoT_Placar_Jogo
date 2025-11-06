@@ -640,7 +640,5 @@ O vídeo demonstra:
 
 ## 🧾 Créditos e Agradecimentos  
 
-- **Base do projeto:** Prof. *Fábio Cabrini*  
-- **Adaptação e melhorias:** *Luiz Antonio Morais* e equipe  
 - **Instituição:** *FIAP — Engenharia de Software*  
 - **Disciplina:** *IoT & Sistemas Embarcados*  

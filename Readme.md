@@ -107,7 +107,8 @@ yaml
 Copiar código
 → Envie `golA`, `golB` ou `reset`.
 
-📸 **[INSERIR AQUI IMAGEM 4: Print do app MyMQTT recebendo atualizações do placar]**
+📸 **[(https://github.com/user-attachments/assets/98f059c5-6bfc-403f-8df7-7d41d02b02cf)
+]**
 
 ---
 

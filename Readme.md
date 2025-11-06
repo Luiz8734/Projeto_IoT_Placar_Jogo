@@ -627,7 +627,7 @@ Esta seção contém o vídeo completo de demonstração do projeto, mostrando t
 
 ### 📺 Vídeo no YouTube
 
-[![Demonstração do Placar Conectado - ESP32 + MQTT](https://img.youtube.com/vi/VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID_HERE)
+[![Demonstração do Placar Conectado - ESP32 + MQTT](<img width="200" height="100" alt="image" src="https://github.com/user-attachments/assets/f1b7008d-af30-4f1a-ac28-ff2959b8baeb" />)
 
 **Link direto:** 👉 [INSERIR AQUI O LINK DO VÍDEO DE DEMONSTRAÇÃO DO YOUTUBE](https://www.youtube.com/watch?v=VIDEO_ID_HERE)
 

@@ -620,7 +620,7 @@ Esta seção contém o vídeo completo de demonstração do projeto, mostrando t
 
 ### 📺 Vídeo no YouTube
 
-**Link direto:** 👉 [INSERIR AQUI O LINK DO VÍDEO DE DEMONSTRAÇÃO DO YOUTUBE](https://www.youtube.com/watch?v=VIDEO_ID_HERE)
+**Link direto:** 👉 [VÍDEO DE DEMONSTRAÇÃO DO YOUTUBE]((https://youtu.be/Fjor1Ve6CJg?feature=shared))
 
 ### 📋 Conteúdo do Vídeo
 

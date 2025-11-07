@@ -152,11 +152,6 @@ http://localhost:5000
 
 3. **A aplicação estará rodando e conectada ao broker MQTT!**
 
-### 🌐 Acesso à Aplicação
-
-**Local:** `http://localhost:5000`  
-**Deploy:** [INSERIR URL DO DEPLOY AQUI](INSERIR_URL_DO_DEPLOY_AQUI)
-
 ### 📡 Rotas da API
 
 | Rota | Método | Descrição | Retorno |
@@ -194,7 +189,8 @@ http://localhost:5000
 ### 📸 Screenshot da Interface Web
 
 <!-- Adicione aqui uma captura de tela da aplicação web -->
-![Interface da Aplicação Web](https://via.placeholder.com/800x500/121212/e0e0e0?text=Placar+Interativo+-+Screenshot)
+<img width="1429" height="868" alt="image" src="https://github.com/user-attachments/assets/0d0680cc-c8b5-4283-9bbb-f8f589c19608" />
+
 
 > **Nota:** Adicione aqui a imagem da interface web. Recomenda-se usar uma captura de tela mostrando o placar e o gráfico em funcionamento.
 
@@ -747,35 +743,6 @@ void loop() {
 - **Reatividade:** Botões são lidos a cada 50ms (máximo 20 leituras/segundo)
 - **Sincronização:** Tanto botões físicos quanto comandos MQTT executam o mesmo fluxo
 - **Confiabilidade:** Sistema robusto com reconexão automática e tratamento de erros  
-
----
-
-## 🚀 Deploy da Aplicação Web
-
-### 🌐 Link do Deploy
-
-**🔗 Aplicação disponível em:** [INSERIR URL DO DEPLOY AQUI](INSERIR_URL_DO_DEPLOY_AQUI)
-
-<!-- 
-### 📦 Opções de Deploy
-
-#### Opção 1: Heroku
-[Instruções para deploy no Heroku]
-
-#### Opção 2: Railway
-[Instruções para deploy no Railway]
-
-#### Opção 3: Render
-[Instruções para deploy no Render]
-
-#### Opção 4: PythonAnywhere
-[Instruções para deploy no PythonAnywhere]
-
-#### Opção 5: VPS (DigitalOcean, AWS EC2, etc.)
-[Instruções para deploy em VPS]
--->
-
-> **Nota:** Adicione aqui o link do deploy e as instruções quando a aplicação estiver no ar.
 
 ---
 

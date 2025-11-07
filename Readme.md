@@ -60,6 +60,36 @@ O projeto tem como objetivo demonstrar a integração prática entre o **ESP32**
 
 ---
 
+## 📁 Estrutura do Projeto
+
+```
+Projeto_IoT_Placar_Jogo-1/
+│
+├── backend/                    # Aplicação Flask (Backend + Frontend)
+│   ├── app.py                 # Servidor Flask e integração MQTT
+│   ├── requirements.txt       # Dependências Python
+│   ├── README.md              # Documentação do backend
+│   └── templates/             # Templates HTML
+│       └── index.html         # Interface web do placar
+│
+├── iot-devices/               # Código do dispositivo ESP32
+│   └── README.md             # Documentação do código IoT
+│
+├── scripts/                   # Scripts auxiliares
+│   └── README.md             # Documentação dos scripts
+│
+└── Readme.md                  # Documentação principal do projeto
+```
+
+### 📂 Descrição das Pastas
+
+- **`/backend`**: Contém toda a aplicação web Flask (servidor, templates, dependências)
+- **`/iot-devices`**: Código-fonte do firmware ESP32 (disponível no Wokwi)
+- **`/scripts`**: Scripts auxiliares para desenvolvimento, deploy, testes, etc.
+- **Raiz**: Documentação principal e arquivos de configuração do projeto
+
+---
+
 ## 🌐 Aplicação Web Flask
 
 O projeto inclui uma **aplicação web** desenvolvida em Flask que consome os dados do placar via MQTT e exibe uma interface moderna e interativa no navegador.
@@ -87,29 +117,32 @@ git clone <url-do-repositorio>
 cd Projeto_IoT_Placar_Jogo-1
 ```
 
-2. **Instale as dependências Python:**
+2. **Navegue para a pasta backend:**
 ```bash
-pip install flask paho-mqtt matplotlib seaborn
+cd backend
 ```
 
-Ou crie um arquivo `requirements.txt` com o seguinte conteúdo:
-```
-Flask==3.0.0
-paho-mqtt==1.6.1
-matplotlib==3.8.2
-seaborn==0.13.0
-```
-
-E instale usando:
+3. **Instale as dependências Python:**
 ```bash
 pip install -r requirements.txt
 ```
 
+Ou instale manualmente:
+```bash
+pip install flask paho-mqtt matplotlib seaborn
+```
+
 #### Executando o Servidor
 
-1. **Execute o arquivo `app.py`:**
+1. **Execute o arquivo `app.py` (certifique-se de estar na pasta `backend/`):**
 ```bash
+cd backend
 python app.py
+```
+
+Ou a partir da raiz do projeto:
+```bash
+python backend/app.py
 ```
 
 2. **Acesse no navegador:**

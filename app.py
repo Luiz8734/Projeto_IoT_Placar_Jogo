@@ -1,7 +1,16 @@
+"""
+Projeto IoT - Placar Eletrônico
+Desenvolvido por:
+- LUIZ: Configuração Flask e estrutura base
+- KEVIN: Integração MQTT e processamento de dados
+- NICOLAS: Visualização de dados e gráficos
+- GUILHERME: Frontend e UI/UX
+"""
+
 from flask import Flask, render_template, jsonify, send_file
 import paho.mqtt.client as mqtt
 import matplotlib
-matplotlib.use("Agg")  # backend para servidores
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import seaborn as sns
 import json
@@ -9,14 +18,20 @@ import io
 
 app = Flask(__name__)
 
-# VARIÁVEIS DO PLACAR
+"""
+LUIZ
+Estrutura inicial dos dados e configuração da aplicação Flask
+"""
 dados_placar = {
     "TimeA": 0,
     "TimeB": 0,
     "Data": ""
 }
 
-# CALLBACKS MQTT
+"""
+KEVIN
+Implementação das callbacks MQTT e gerenciamento de conexão
+"""
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Conectado ao broker MQTT!")
@@ -36,6 +51,10 @@ def on_message(client, userdata, msg):
     except Exception as e:
         print(f"JSON inválido: {e}")
 
+"""
+KEVIN
+Configuração e inicialização do cliente MQTT
+"""
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
@@ -47,6 +66,10 @@ try:
 except Exception as e:
     print(f"ERRO ao conectar ao broker: {e}")
 
+"""
+NICOLAS
+Implementação da visualização gráfica dos dados
+"""
 @app.route("/grafico")
 def grafico():
     try:
@@ -92,6 +115,10 @@ def grafico():
         print(f"ERRO ao gerar gráfico: {e}")
         return "Erro ao gerar gráfico", 500
 
+"""
+GUILHERME
+Rotas da aplicação web e renderização do frontend
+"""
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -100,5 +127,9 @@ def index():
 def dados():
     return jsonify(dados_placar)
 
+"""
+LUIZ
+Configuração de execução da aplicação
+"""
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

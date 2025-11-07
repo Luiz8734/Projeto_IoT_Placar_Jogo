@@ -191,9 +191,6 @@ http://localhost:5000
 <!-- Adicione aqui uma captura de tela da aplicação web -->
 <img width="1429" height="868" alt="image" src="https://github.com/user-attachments/assets/0d0680cc-c8b5-4283-9bbb-f8f589c19608" />
 
-
-> **Nota:** Adicione aqui a imagem da interface web. Recomenda-se usar uma captura de tela mostrando o placar e o gráfico em funcionamento.
-
 ### 🔧 Arquitetura da Aplicação Web
 
 ```

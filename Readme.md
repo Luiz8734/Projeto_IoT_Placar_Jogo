@@ -117,9 +117,9 @@ git clone <url-do-repositorio>
 cd Projeto_IoT_Placar_Jogo-1
 ```
 
-2. **Navegue para a pasta backend:**
+2. **Navegue para a pasta templates:**
 ```bash
-cd backend
+cd templates
 ```
 
 3. **Instale as dependências Python:**
@@ -134,15 +134,14 @@ pip install flask paho-mqtt matplotlib seaborn
 
 #### Executando o Servidor
 
-1. **Execute o arquivo `app.py` (certifique-se de estar na pasta `backend/`):**
+1. **Execute o arquivo `app.py` (certifique-se de estar na pasta):**
 ```bash
-cd backend
 python app.py
 ```
 
 Ou a partir da raiz do projeto:
 ```bash
-python backend/app.py
+python app.py
 ```
 
 2. **Acesse no navegador:**
